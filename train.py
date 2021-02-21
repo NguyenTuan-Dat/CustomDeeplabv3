@@ -121,24 +121,25 @@ def train(network_backbone, pre_trained_model=None, trainset_filename='/content/
             # validation_demo(images=images, labels=np.squeeze(labels, axis=-1), predictions=predictions, demo_dir=os.path.join(results_dir, 'training_demo'), batch_no=_)
         train_iterator.shuffle_dataset()
 
-        print('Training using SBD...')
-        for _ in trange(np.ceil(train_augmented_iterator.dataset_size / minibatch_size).astype(int)):
-            images, labels = train_augmented_iterator.next_minibatch()
-            balanced_weight_decay = weight_decay * sum(labels != ignore_label) / labels.size
-            outputs, train_loss = model.train(inputs=images, labels=labels, target_height=image_shape[0], target_width=image_shape[1], learning_rate=learning_rate, weight_decay=balanced_weight_decay)
-            train_loss_total += train_loss
-
-            predictions = np.argmax(outputs, axis=-1)
-            num_pixels_union, num_pixels_intersection = count_label_prediction_matches(labels=np.squeeze(labels, axis=-1), predictions=predictions, num_classes=num_classes, ignore_label=ignore_label)
-
-            num_pixels_union_total += num_pixels_union
-            num_pixels_intersection_total += num_pixels_intersection
-
-            # validation_demo(images=images, labels=np.squeeze(labels, axis=-1), predictions=predictions, demo_dir=os.path.join(results_dir, 'training_demo'), batch_no=_)
-        train_augmented_iterator.shuffle_dataset()
+        # print('Training using SBD...')
+        # for _ in trange(np.ceil(train_augmented_iterator.dataset_size / minibatch_size).astype(int)):
+        #     images, labels = train_augmented_iterator.next_minibatch()
+        #     balanced_weight_decay = weight_decay * sum(labels != ignore_label) / labels.size
+        #     outputs, train_loss = model.train(inputs=images, labels=labels, target_height=image_shape[0], target_width=image_shape[1], learning_rate=learning_rate, weight_decay=balanced_weight_decay)
+        #     train_loss_total += train_loss
+        #
+        #     predictions = np.argmax(outputs, axis=-1)
+        #     num_pixels_union, num_pixels_intersection = count_label_prediction_matches(labels=np.squeeze(labels, axis=-1), predictions=predictions, num_classes=num_classes, ignore_label=ignore_label)
+        #
+        #     num_pixels_union_total += num_pixels_union
+        #     num_pixels_intersection_total += num_pixels_intersection
+        #
+        #     # validation_demo(images=images, labels=np.squeeze(labels, axis=-1), predictions=predictions, demo_dir=os.path.join(results_dir, 'training_demo'), batch_no=_)
+        # train_augmented_iterator.shuffle_dataset()
 
         mIoU = mean_intersection_over_union(num_pixels_union=num_pixels_union_total, num_pixels_intersection=num_pixels_intersection_total)
-        train_loss_ave = train_loss_total / (train_iterator.dataset_size + train_augmented_iterator.dataset_size)
+        # train_loss_ave = train_loss_total / (train_iterator.dataset_size + train_augmented_iterator.dataset_size)
+        train_loss_ave = train_loss_total / train_iterator.dataset_size
         print('Training loss: {:.4f} | mIoU: {:.4f}'.format(train_loss_ave, mIoU))
 
     model.close()
