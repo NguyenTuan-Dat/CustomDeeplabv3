@@ -193,4 +193,4 @@ if __name__ == '__main__':
     tf.set_random_seed(random_seed)
     np.random.seed(random_seed)
 
-    train(network_backbone=network_backbone, pre_trained_model=pre_trained_model, trainset_filename=trainset_filename, valset_filename=valset_filename, images_dir=images_dir, labels_dir=labels_dir, trainset_augmented_filename=trainset_augmented_filename, images_augmented_dir=images_augmented_dir, labels_augmented_dir=labels_augmented_dir, model_dir=model_dir, log_dir=log_dir)
+    train(network_backbone=network_backbone, pre_trained_model=None, trainset_filename=trainset_filename, valset_filename=valset_filename, images_dir=images_dir, labels_dir=labels_dir, trainset_augmented_filename=trainset_augmented_filename, images_augmented_dir=images_augmented_dir, labels_augmented_dir=labels_augmented_dir, model_dir=model_dir, log_dir=log_dir)
