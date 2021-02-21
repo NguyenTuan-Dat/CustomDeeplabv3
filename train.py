@@ -14,11 +14,11 @@ from utils import (DataPreprocessor, Dataset, Iterator,
                    validation_single_demo)
 
 
-def train(network_backbone, pre_trained_model=None, trainset_filename='data/datasets/VOCdevkit/VOC2012/ImageSets/Segmentation/train.txt', valset_filename='data/datasets/VOCdevkit/VOC2012/ImageSets/Segmentation/val.txt', images_dir='data/datasets/VOCdevkit/VOC2012/JPEGImages/', labels_dir='data/datasets/VOCdevkit/VOC2012/SegmentationClass/', trainset_augmented_filename='data/datasets/SBD/train_noval.txt', images_augmented_dir='data/datasets/SBD/benchmark_RELEASE/dataset/img/', labels_augmented_dir='data/datasets/SBD/benchmark_RELEASE/dataset/cls/', model_dir=None, log_dir='data/logs/deeplab/'):
+def train(network_backbone, pre_trained_model=None, trainset_filename='/content/Data_Camera_SanTennis_Labeled/train.txt', valset_filename='/content/Data_Camera_SanTennis_Labeled/valid.txt', images_dir='/content/Data_Camera_SanTennis_Labeled/RGBs/', labels_dir='/content/Data_Camera_SanTennis_Labeled/Labels/', trainset_augmented_filename='data/datasets/SBD/train_noval.txt', images_augmented_dir='data/datasets/SBD/benchmark_RELEASE/dataset/img/', labels_augmented_dir='data/datasets/SBD/benchmark_RELEASE/dataset/cls/', model_dir=None, log_dir='data/logs/deeplab/'):
 
     if not model_dir:
         model_dir = 'data/models/deeplab/{}_voc2012/'.format(network_backbone)
-    num_classes = 21
+    num_classes = 5
     ignore_label = 255
     num_epochs = 1000
     minibatch_size = 8  # Unable to do minibatch_size = 12 :(
@@ -26,7 +26,7 @@ def train(network_backbone, pre_trained_model=None, trainset_filename='data/data
     learning_rate = 1e-5
     weight_decay = 5e-4
     batch_norm_decay = 0.99
-    image_shape = [513, 513]
+    image_shape = [640, 480]
 
     # validation_scales = [0.5, 1, 1.5]
     validation_scales = [1]
@@ -37,8 +37,8 @@ def train(network_backbone, pre_trained_model=None, trainset_filename='data/data
         os.makedirs(log_dir)
 
     # Prepare datasets
-    train_dataset = Dataset(dataset_filename=trainset_filename, images_dir=images_dir, labels_dir=labels_dir, image_extension='.jpg', label_extension='.png')
-    valid_dataset = Dataset(dataset_filename=valset_filename, images_dir=images_dir, labels_dir=labels_dir, image_extension='.jpg', label_extension='.png')
+    train_dataset = Dataset(dataset_filename=trainset_filename, images_dir=images_dir, labels_dir=labels_dir, image_extension='.png', label_extension='.png')
+    valid_dataset = Dataset(dataset_filename=valset_filename, images_dir=images_dir, labels_dir=labels_dir, image_extension='.png', label_extension='.png')
 
     # Calculate image channel means
     channel_means = save_load_means(means_filename='channel_means.npz', image_filenames=train_dataset.image_filenames, recalculate=False)
@@ -50,12 +50,12 @@ def train(network_backbone, pre_trained_model=None, trainset_filename='data/data
     valid_iterator = Iterator(dataset=valid_dataset, minibatch_size=minibatch_size, process_func=voc2012_preprocessor.preprocess, random_seed=None, scramble=False, num_jobs=1)
 
     # Prepare augmented dataset
-    train_augmented_dataset = Dataset(dataset_filename=trainset_augmented_filename, images_dir=images_augmented_dir, labels_dir=labels_augmented_dir, image_extension='.jpg', label_extension='.mat')
-
-    channel_augmented_means = save_load_means(means_filename='channel_augmented_means.npz', image_filenames=train_augmented_dataset.image_filenames, recalculate=False)
-
-    voc2012_augmented_preprocessor = DataPreprocessor(channel_means=channel_augmented_means, output_size=image_shape, min_scale_factor=0.5, max_scale_factor=2.0)
-    train_augmented_iterator = Iterator(dataset=train_augmented_dataset, minibatch_size=minibatch_size, process_func=voc2012_augmented_preprocessor.preprocess, random_seed=random_seed, scramble=True, num_jobs=1)
+    # train_augmented_dataset = Dataset(dataset_filename=trainset_augmented_filename, images_dir=images_augmented_dir, labels_dir=labels_augmented_dir, image_extension='.jpg', label_extension='.mat')
+    #
+    # channel_augmented_means = save_load_means(means_filename='channel_augmented_means.npz', image_filenames=train_augmented_dataset.image_filenames, recalculate=False)
+    #
+    # voc2012_augmented_preprocessor = DataPreprocessor(channel_means=channel_augmented_means, output_size=image_shape, min_scale_factor=0.5, max_scale_factor=2.0)
+    # train_augmented_iterator = Iterator(dataset=train_augmented_dataset, minibatch_size=minibatch_size, process_func=voc2012_augmented_preprocessor.preprocess, random_seed=random_seed, scramble=True, num_jobs=1)
 
     model = DeepLab(network_backbone, num_classes=num_classes, ignore_label=ignore_label, batch_norm_momentum=batch_norm_decay, pre_trained_model=pre_trained_model, log_dir=log_dir)
 
