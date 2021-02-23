@@ -144,6 +144,7 @@ class Iterator(object):
 
         image = read_image(image_filename=image_filename)
         label = read_label(label_filename=label_filename)
+        label = cv2.cvtColor(label, cv2.COLOR_BGR2GRAY)
         label = np.expand_dims(label, axis=2)
 
         return image, label
@@ -159,8 +160,18 @@ class Iterator(object):
         # Multithread image processing
         # Reference: https://www.kaggle.com/inoryy/fast-image-pre-process-in-parallel
 
-        results = Parallel(n_jobs=self.num_jobs)(delayed(self.process_func)(image_filename, label_filename) for image_filename, label_filename in zip(image_filenames_minibatch, label_filenames_minibatch))
-        images, labels = zip(*results)
+        # results = Parallel(n_jobs=self.num_jobs)(delayed(self.process_func)(image_filename, label_filename) for image_filename, label_filename in zip(image_filenames_minibatch, label_filenames_minibatch))
+        # images, labels = zip(*results)
+
+        images = list()
+        labels = list()
+        for idx in range(len(image_filenames_minibatch)):
+            image = read_image(image_filename=image_filenames_minibatch[idx])
+            label = read_label(label_filename=label_filenames_minibatch[idx])
+            label = cv2.cvtColor(label, cv2.COLOR_BGR2GRAY)
+            label = np.expand_dims(label, axis=2)
+            images.append(image)
+            labels.append(label)
 
         images = np.asarray(images)
         labels = np.asarray(labels)

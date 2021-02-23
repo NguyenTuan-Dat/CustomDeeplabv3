@@ -26,7 +26,7 @@ def train(network_backbone, pre_trained_model=None, trainset_filename='/content/
     learning_rate = 1e-5
     weight_decay = 5e-4
     batch_norm_decay = 0.99
-    image_shape = [640, 480]
+    image_shape = [480,640]
 
     # validation_scales = [0.5, 1, 1.5]
     validation_scales = [1]
@@ -75,7 +75,6 @@ def train(network_backbone, pre_trained_model=None, trainset_filename='/content/
         for _ in trange(valid_iterator.dataset_size):
             image, label = valid_iterator.next_raw_data()
 
-            print("image, label: " +  str(image.shape) + ", " + str(label.shape))
             image = subtract_channel_means(image=image, channel_means=channel_means)
 
             output, valid_loss = multiscale_single_validate(image=image, label=label, input_scales=validation_scales, validator=model.validate)
