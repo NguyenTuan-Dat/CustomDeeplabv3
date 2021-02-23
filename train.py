@@ -74,6 +74,8 @@ def train(network_backbone, pre_trained_model=None, trainset_filename='/content/
         # Multi-scale inputs prediction
         for _ in trange(valid_iterator.dataset_size):
             image, label = valid_iterator.next_raw_data()
+
+            print("image, label: " +  str(image) + str(label))
             image = subtract_channel_means(image=image, channel_means=channel_means)
 
             output, valid_loss = multiscale_single_validate(image=image, label=label, input_scales=validation_scales, validator=model.validate)
