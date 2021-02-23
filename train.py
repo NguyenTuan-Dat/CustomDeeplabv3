@@ -99,8 +99,8 @@ def train(network_backbone, pre_trained_model=None, trainset_filename='/content/
 
         print('Validation loss: {:.4f} | mIoU: {:.4f}'.format(valid_loss_ave, mean_IOU))
 
-        valid_loss += str(valid_loss_ave) + ","
-        valid_mIoU += str(mean_IOU) + ","
+        valid_loss = valid_loss +  str(valid_loss_ave) + ","
+        valid_mIoU = valid_mIoU +  str(mean_IOU) + ","
 
         if mean_IOU > best_mIoU:
             best_mIoU = mean_IOU
@@ -151,8 +151,8 @@ def train(network_backbone, pre_trained_model=None, trainset_filename='/content/
         train_loss_ave = train_loss_total / train_iterator.dataset_size
         print('Training loss: {:.4f} | mIoU: {:.4f}'.format(train_loss_ave, mIoU))
 
-        train_loss += str(train_loss_ave) + ","
-        train_mIoU += str(mIoU) + ","
+        train_loss = train_loss + str(train_loss_ave) + ","
+        train_mIoU = train_mIoU + str(mIoU) + ","
 
         loss_log = open("/content/drive/MyDrive/Colab Notebooks/RobotNhatBongTennis2021/loss_log.txt", "w")
         mIoU_log = open("/content/drive/MyDrive/Colab Notebooks/RobotNhatBongTennis2021/mIoU_log.txt", "w")
