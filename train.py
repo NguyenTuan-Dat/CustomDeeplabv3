@@ -17,7 +17,7 @@ from utils import (DataPreprocessor, Dataset, Iterator,
 def train(network_backbone, pre_trained_model=None, trainset_filename='/content/Data_Camera_SanTennis_Labeled/train.txt', valset_filename='/content/Data_Camera_SanTennis_Labeled/valid.txt', images_dir='/content/Data_Camera_SanTennis_Labeled/RGBs/', labels_dir='/content/Data_Camera_SanTennis_Labeled/Labels/', trainset_augmented_filename='data/datasets/SBD/train_noval.txt', images_augmented_dir='data/datasets/SBD/benchmark_RELEASE/dataset/img/', labels_augmented_dir='data/datasets/SBD/benchmark_RELEASE/dataset/cls/', model_dir=None, log_dir='data/logs/deeplab/'):
 
     if not model_dir:
-        model_dir = 'data/models/deeplab/{}_voc2012/'.format(network_backbone)
+        model_dir = '/content/drive/MyDrive/Colab Notebooks/RobotNhatBongTennis2021/Models/'.format(network_backbone)
     num_classes = 5
     ignore_label = 255
     num_epochs = 1000
@@ -61,6 +61,11 @@ def train(network_backbone, pre_trained_model=None, trainset_filename='/content/
 
     best_mIoU = 0
 
+    train_loss = ""
+    train_mIoU = ""
+    valid_loss = ""
+    valid_mIoU = ""
+
     for i in range(num_epochs):
 
         print('Epoch number: {}'.format(i))
@@ -94,6 +99,9 @@ def train(network_backbone, pre_trained_model=None, trainset_filename='/content/
 
         print('Validation loss: {:.4f} | mIoU: {:.4f}'.format(valid_loss_ave, mean_IOU))
 
+        valid_loss += str(valid_loss_ave) + ","
+        valid_mIoU += str(mean_IOU) + ","
+
         if mean_IOU > best_mIoU:
             best_mIoU = mean_IOU
             model_savename = '{}_{:.4f}.ckpt'.format(network_backbone, best_mIoU)
@@ -106,7 +114,7 @@ def train(network_backbone, pre_trained_model=None, trainset_filename='/content/
         num_pixels_union_total = np.zeros(num_classes)
         num_pixels_intersection_total = np.zeros(num_classes)
 
-        print('Training using VOC2012...')
+        print('Training using Data Nhà làm...')
         for _ in trange(np.ceil(train_iterator.dataset_size / minibatch_size).astype(int)):
             images, labels = train_iterator.next_minibatch()
             balanced_weight_decay = weight_decay * sum(labels != ignore_label) / labels.size
@@ -142,6 +150,15 @@ def train(network_backbone, pre_trained_model=None, trainset_filename='/content/
         # train_loss_ave = train_loss_total / (train_iterator.dataset_size + train_augmented_iterator.dataset_size)
         train_loss_ave = train_loss_total / train_iterator.dataset_size
         print('Training loss: {:.4f} | mIoU: {:.4f}'.format(train_loss_ave, mIoU))
+
+        train_loss += str(train_loss_ave) + ","
+        train_mIoU += str(mIoU) + ","
+
+        loss_log = open("/content/drive/MyDrive/Colab Notebooks/RobotNhatBongTennis2021/loss_log.txt", "w")
+        mIoU_log = open("/content/drive/MyDrive/Colab Notebooks/RobotNhatBongTennis2021/mIoU_log.txt", "w")
+
+        loss_log.write(train_loss + "\n" + valid_loss)
+        mIoU_log.write(train_mIoU + "\n" + valid_mIoU)
 
     model.close()
 
