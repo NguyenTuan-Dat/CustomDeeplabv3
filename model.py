@@ -110,6 +110,8 @@ class DeepLab(object):
 
     def validate(self, inputs, labels, target_height, target_width):
 
+        print("inputs, labels: " + str(inputs.shape) + ", " + str(labels.shape))
+
         outputs, valid_loss, summaries = self.sess.run([self.outputs, self.loss, self.valid_summaries], feed_dict={self.inputs: inputs, self.labels: labels, self.target_height: target_height, self.target_width: target_width, self.is_training: False})
 
         self.writer.add_summary(summaries, self.train_step)
