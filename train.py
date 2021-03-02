@@ -12,6 +12,7 @@ from utils import (DataPreprocessor, Dataset, Iterator,
                    mean_intersection_over_union, multiscale_single_validate,
                    save_load_means, subtract_channel_means, validation_demo,
                    validation_single_demo)
+import time
 
 
 def train(network_backbone, pre_trained_model=None, trainset_filename='/content/Data_Camera_SanTennis_Labeled/train.txt', valset_filename='/content/Data_Camera_SanTennis_Labeled/valid.txt', images_dir='/content/Data_Camera_SanTennis_Labeled/RGBs/', labels_dir='/content/Data_Camera_SanTennis_Labeled/Labels/', trainset_augmented_filename='data/datasets/SBD/train_noval.txt', images_augmented_dir='data/datasets/SBD/benchmark_RELEASE/dataset/img/', labels_augmented_dir='data/datasets/SBD/benchmark_RELEASE/dataset/cls/', model_dir=None, log_dir='data/logs/deeplab/'):
@@ -91,7 +92,7 @@ def train(network_backbone, pre_trained_model=None, trainset_filename='/content/
             num_pixels_union_total += num_pixels_union
             num_pixels_intersection_total += num_pixels_intersection
 
-            # validation_single_demo(image=image, label=np.squeeze(label, axis=-1), prediction=prediction, demo_dir=os.path.join(results_dir, 'validation_demo'), filename=str(_))
+            validation_single_demo(image=image, label=np.squeeze(label, axis=-1), prediction=prediction, demo_dir=os.path.join("/content/CustomDeeplabv3/data/demos/deeplab/resnet_101_voc2012/", 'validation_demo'), filename=str(time.time()))
 
         mean_IOU = mean_intersection_over_union(num_pixels_union=num_pixels_union_total, num_pixels_intersection=num_pixels_intersection_total)
 
@@ -127,7 +128,7 @@ def train(network_backbone, pre_trained_model=None, trainset_filename='/content/
             num_pixels_union_total += num_pixels_union
             num_pixels_intersection_total += num_pixels_intersection
 
-            # validation_demo(images=images, labels=np.squeeze(labels, axis=-1), predictions=predictions, demo_dir=os.path.join(results_dir, 'training_demo'), batch_no=_)
+            validation_demo(images=images, labels=np.squeeze(labels, axis=-1), predictions=predictions, demo_dir=os.path.join("/content/CustomDeeplabv3/data/demos/deeplab/resnet_101_voc2012/", 'training_demo'), batch_no=_)
         train_iterator.shuffle_dataset()
 
         # print('Training using SBD...')
