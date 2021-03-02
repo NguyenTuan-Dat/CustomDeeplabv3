@@ -17,7 +17,7 @@ from utils import (DataPreprocessor, Dataset, Iterator,
 def train(network_backbone, pre_trained_model=None, trainset_filename='/content/Data_Camera_SanTennis_Labeled/train.txt', valset_filename='/content/Data_Camera_SanTennis_Labeled/valid.txt', images_dir='/content/Data_Camera_SanTennis_Labeled/RGBs/', labels_dir='/content/Data_Camera_SanTennis_Labeled/Labels/', trainset_augmented_filename='data/datasets/SBD/train_noval.txt', images_augmented_dir='data/datasets/SBD/benchmark_RELEASE/dataset/img/', labels_augmented_dir='data/datasets/SBD/benchmark_RELEASE/dataset/cls/', model_dir=None, log_dir='data/logs/deeplab/'):
 
     if not model_dir:
-        model_dir = '/content/drive/MyDrive/Colab Notebooks/RobotNhatBongTennis2021/Models/'.format(network_backbone)
+        model_dir = '/content/drive/MyDrive/Colab Notebooks/RobotNhatBongTennis2021/Models/'
     num_classes = 5
     ignore_label = 255
     num_epochs = 1000
@@ -26,7 +26,7 @@ def train(network_backbone, pre_trained_model=None, trainset_filename='/content/
     learning_rate = 1e-5
     weight_decay = 5e-4
     batch_norm_decay = 0.99
-    image_shape = [480,640]
+    image_shape = [240,320]
 
     # validation_scales = [0.5, 1, 1.5]
     validation_scales = [1]
@@ -168,7 +168,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Train DeepLab V3 for image semantic segmantation.')
 
     network_backbone_default = 'resnet_101'
-    pre_trained_model_default = 'data/models/pretrained/resnet_101/resnet_v2_101.ckpt'
+    pre_trained_model_default = None
     trainset_filename_default = 'data/datasets/VOCdevkit/VOC2012/ImageSets/Segmentation/train.txt'
     valset_filename_default = 'data/datasets/VOCdevkit/VOC2012/ImageSets/Segmentation/val.txt'
     images_dir_default = 'data/datasets/VOCdevkit/VOC2012/JPEGImages/'

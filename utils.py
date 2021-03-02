@@ -10,6 +10,7 @@ import scipy.io
 from joblib import Parallel, delayed
 from PIL import Image
 from tqdm import tqdm
+import matplotlib.pyplot as plt
 
 
 def image_channel_means(image_filenames):
@@ -144,7 +145,10 @@ class Iterator(object):
 
         image = read_image(image_filename=image_filename)
         label = read_label(label_filename=label_filename)
+        plt.imshow(label, cmap="color")
         label = cv2.cvtColor(label, cv2.COLOR_BGR2GRAY)
+        plt.imshow(label, cmap="gray")
+        cv2.waitKey()
         label = np.expand_dims(label, axis=2)
 
         return image, label
