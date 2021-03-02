@@ -145,10 +145,6 @@ class Iterator(object):
 
         image = read_image(image_filename=image_filename)
         label = read_label(label_filename=label_filename)
-        plt.imshow(label, cmap="gray")
-        label = cv2.cvtColor(label, cv2.COLOR_BGR2GRAY)
-        plt.imshow(label, cmap="gray")
-        cv2.waitKey()
         label = np.expand_dims(label, axis=2)
 
         return image, label
@@ -172,7 +168,7 @@ class Iterator(object):
         for idx in range(len(image_filenames_minibatch)):
             image = read_image(image_filename=image_filenames_minibatch[idx])
             label = read_label(label_filename=label_filenames_minibatch[idx])
-            label = cv2.cvtColor(label, cv2.COLOR_BGR2GRAY)
+            # label = cv2.cvtColor(label, cv2.COLOR_BGR2GRAY)
             label = np.expand_dims(label, axis=2)
             images.append(image)
             labels.append(label)
@@ -202,7 +198,7 @@ def read_label(label_filename):
         label = mat['GTcls']['Segmentation'][0][0]
     else:
         # Magic function to read VOC2012 semantic labelshttps://github.com/tensorflow/models/blob/master/research/deeplab/datasets/remove_gt_colormap.py#L42
-        label = np.asarray(Image.open(label_filename))
+        label = np.asarray(Image.open(label_filename).convert("L"))
 
     return label
 
