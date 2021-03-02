@@ -88,8 +88,9 @@ class DeepLab(object):
     def dice_loss(self, onehot_labels):
         print(self.outputs.shape)
         print(onehot_labels.shape)
-        numerator = 2 * tf.reduce_sum(onehot_labels[:, :] * tf.reshape(self.outputs, shape=[-1, self.num_classes])[:, :])
-        denominator = tf.reduce_sum(onehot_labels[:, :] + tf.reshape(self.outputs, shape=[-1, self.num_classes])[:, :])
+        labels = tf.squeeze(self.labels, axis=-2)
+        numerator = 2 * tf.reduce_sum(labels[:, :, :, :] * self.outputslabels[:, :, :, :], axis=(1,2,3))
+        denominator = tf.reduce_sum(labels[:, :, :, :]+ self.outputslabels[:, :, :, :], axis=(1,2,3))
 
         return tf.reduce_mean(1 - numerator / denominator)
 
