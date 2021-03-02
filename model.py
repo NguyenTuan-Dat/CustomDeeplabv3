@@ -78,7 +78,7 @@ class DeepLab(object):
         not_ignore_mask = tf.to_float(tf.not_equal(labels_linear, self.ignore_label))
         # The locations represented by indices in indices take value on_value, while all other locations take value off_value.
         # For example, ignore label 255 in VOC2012 dataset will be set to zero vector in onehot encoding (looks like the not ignore mask is not required)
-        onehot_labels = tf.one_hot(indices=labels_linear, depth=self.num_classes, on_value=1.0, off_value=0.0)
+        onehot_labels = tf.one_hot(indices=self.labels, depth=self.num_classes, on_value=1.0, off_value=0.0)
 
         # loss = tf.losses.softmax_cross_entropy(onehot_labels=onehot_labels, logits=tf.reshape(self.outputs, shape=[-1, self.num_classes]), weights=not_ignore_mask)
         loss = self.dice_loss(onehot_labels)
