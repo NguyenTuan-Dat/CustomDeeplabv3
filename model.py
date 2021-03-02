@@ -81,8 +81,15 @@ class DeepLab(object):
         onehot_labels = tf.one_hot(indices=labels_linear, depth=self.num_classes, on_value=1.0, off_value=0.0)
 
         loss = tf.losses.softmax_cross_entropy(onehot_labels=onehot_labels, logits=tf.reshape(self.outputs, shape=[-1, self.num_classes]), weights=not_ignore_mask)
+        loss += self.dice_loss(onehot_labels)
 
         return loss
+
+    def dice_loss(self, onehot_labels):
+        numerator = 2 * tf.reduce_sum(onehot_labels[:, :, :, 3:] * self.outputs[:, :, :, 3:], axis=(1, 2, 3))
+        denominator = tf.reduce_sum(onehot_labels[:, :, :, 3:] + self.outputs[:, :, :, 3:], axis=(1, 2, 3))
+
+        return tf.reduce_mean(1 - numerator / denominator)
 
     def optimizer_initializer(self):
 
