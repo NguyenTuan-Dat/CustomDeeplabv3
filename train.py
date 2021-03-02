@@ -26,7 +26,7 @@ def train(network_backbone, pre_trained_model=None, trainset_filename='/content/
     learning_rate = 1e-5
     weight_decay = 5e-4
     batch_norm_decay = 0.99
-    image_shape = [240,320]
+    image_shape = [480,640]
 
     # validation_scales = [0.5, 1, 1.5]
     validation_scales = [1]
@@ -102,8 +102,9 @@ def train(network_backbone, pre_trained_model=None, trainset_filename='/content/
         # valid_loss += str(train_loss_total / train_iterator.dataset_size) + ","
         valid_mIoU += str(mean_IOU) + ","
 
-        if mean_IOU > best_mIoU:
+        if mean_IOU > best_mIoU and mean_IOU > 20:
             best_mIoU = mean_IOU
+            os.remove(".ckpt.*")
             model_savename = '{}_{:.4f}.ckpt'.format(network_backbone, best_mIoU)
             print('New best mIoU achieved, model saved as {}.'.format(model_savename))
             model.save(model_dir, model_savename)
