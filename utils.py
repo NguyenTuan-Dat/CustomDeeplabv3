@@ -145,7 +145,7 @@ class Iterator(object):
 
         image = read_image(image_filename=image_filename)
         label = read_label(label_filename=label_filename)
-        plt.imshow(label, cmap="color")
+        plt.imshow(label, cmap="gray")
         label = cv2.cvtColor(label, cv2.COLOR_BGR2GRAY)
         plt.imshow(label, cmap="gray")
         cv2.waitKey()
