@@ -89,8 +89,8 @@ class DeepLab(object):
         print(self.outputs.shape)
         print(onehot_labels.shape)
         labels = tf.squeeze(self.labels, axis=-2)
-        numerator = 2 * tf.reduce_sum(labels[:, :, :, :] * self.outputslabels[:, :, :, :], axis=(1,2,3))
-        denominator = tf.reduce_sum(labels[:, :, :, :]+ self.outputslabels[:, :, :, :], axis=(1,2,3))
+        numerator = 2 * tf.reduce_sum(onehot_labels[:, :, :, :] * self.outputslabels[:, :, :, :], axis=(1,2,3))
+        denominator = tf.reduce_sum(onehot_labels[:, :, :, :]+ self.outputslabels[:, :, :, :], axis=(1,2,3))
 
         return tf.reduce_mean(1 - numerator / denominator)
 
