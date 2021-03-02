@@ -93,7 +93,8 @@ class DeepLab(object):
         return tf.reduce_mean(1 - numerator / denominator)
 
     def l2(self, onehot_labels):
-        tf.reduce_sum((tf.cast(onehot_labels, dtype= tf.float32)-self.outputs)**2)
+        loss = tf.reduce_sum((tf.cast(onehot_labels, dtype= tf.float32)-self.outputs)**2)
+        return loss
 
     def optimizer_initializer(self):
 
