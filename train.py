@@ -92,7 +92,7 @@ def train(network_backbone, pre_trained_model=None, trainset_filename='/content/
             num_pixels_union_total += num_pixels_union
             num_pixels_intersection_total += num_pixels_intersection
 
-            validation_single_demo(image=image, label=np.squeeze(label, axis=-1), prediction=prediction, demo_dir=os.path.join("/content/CustomDeeplabv3/data/demos/deeplab/resnet_101_voc2012/", 'validation_demo'), filename=str(time.time()))
+            validation_single_demo(image=image, label=np.squeeze(label, axis=-1), prediction=prediction, demo_dir=os.path.join("/content/CustomDeeplabv3/data/demos/deeplab/resnet_101_voc2012/", 'validation_demo'), val_no=str(time.time()))
 
         mean_IOU = mean_intersection_over_union(num_pixels_union=num_pixels_union_total, num_pixels_intersection=num_pixels_intersection_total)
 
