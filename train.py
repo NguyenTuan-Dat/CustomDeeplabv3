@@ -102,9 +102,8 @@ def train(network_backbone, pre_trained_model=None, trainset_filename='/content/
         # valid_loss += str(train_loss_total / train_iterator.dataset_size) + ","
         valid_mIoU += str(mean_IOU) + ","
 
-        if mean_IOU > best_mIoU and mean_IOU > 20:
+        if mean_IOU > best_mIoU and mean_IOU > 40:
             best_mIoU = mean_IOU
-            os.remove(".ckpt.*")
             model_savename = '{}_{:.4f}.ckpt'.format(network_backbone, best_mIoU)
             print('New best mIoU achieved, model saved as {}.'.format(model_savename))
             model.save(model_dir, model_savename)
