@@ -79,20 +79,21 @@ class DeepLab(object):
         # The locations represented by indices in indices take value on_value, while all other locations take value off_value.
         # For example, ignore label 255 in VOC2012 dataset will be set to zero vector in onehot encoding (looks like the not ignore mask is not required)
         onehot_labels = tf.one_hot(indices=self.labels, depth=self.num_classes, on_value=1.0, off_value=0.0)
+        onehot_labels = tf.squeeze(onehot_labels, axis=-2)
 
         # loss = tf.losses.softmax_cross_entropy(onehot_labels=onehot_labels, logits=tf.reshape(self.outputs, shape=[-1, self.num_classes]), weights=not_ignore_mask)
-        loss = self.dice_loss(onehot_labels)
+        loss = self.dice_loss(onehot_labels) + self.l2(onehot_labels)
 
         return loss
 
     def dice_loss(self, onehot_labels):
-        print(self.outputs.shape)
-        print(onehot_labels.shape)
-        onehot_labels = tf.squeeze(onehot_labels, axis=-2)
-        numerator = 2 * tf.reduce_sum(onehot_labels[:, :, :, :] * self.outputs[:, :, :, :], axis=(1,2,3))
-        denominator = tf.reduce_sum(onehot_labels[:, :, :, :]+ self.outputs[:, :, :, :], axis=(1,2,3))
+        numerator = 2 * tf.reduce_sum(onehot_labels[:, :, :, 1:] * self.outputs[:, :, :, 1:], axis=(1,2,3))
+        denominator = tf.reduce_sum(onehot_labels[:, :, :, 1:]+ self.outputs[:, :, :, 1:], axis=(1,2,3))
 
         return tf.reduce_mean(1 - numerator / denominator)
+
+    def l2(self, onehot_labels):
+        tf.reduce_sum((tf.cast(onehot_labels, dtype= tf.float32)-self.outputs)**2)
 
     def optimizer_initializer(self):
 
