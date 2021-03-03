@@ -82,7 +82,7 @@ class DeepLab(object):
         onehot_labels = tf.squeeze(onehot_labels, axis=-2)
 
         # loss = tf.losses.softmax_cross_entropy(onehot_labels=onehot_labels, logits=tf.reshape(self.outputs, shape=[-1, self.num_classes]), weights=not_ignore_mask)
-        loss = self.dice_loss(onehot_labels) + self.l2(onehot_labels) + self.loss_cce(onehot_labels)
+        loss = 2 * self.dice_loss(onehot_labels) + self.l2(onehot_labels) + self.loss_cce(onehot_labels)
 
         return loss
 
@@ -98,7 +98,7 @@ class DeepLab(object):
 
     def loss_cce(self, onehot_labels):
         cce = tf.keras.losses.CategoricalCrossentropy()
-        loss = cce(onehot_labels, self.outputs).numpy()
+        loss = cce(onehot_labels, self.outputs)
         return tf.reduce_mean(cce)
 
     def optimizer_initializer(self):
