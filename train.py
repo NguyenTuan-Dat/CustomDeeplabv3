@@ -24,7 +24,7 @@ def train(network_backbone, pre_trained_model=None, trainset_filename='/content/
     num_epochs = 1000
     minibatch_size = 8  # Unable to do minibatch_size = 12 :(
     random_seed = 0
-    learning_rate = 5e-4
+    learning_rate = 1e-3
     weight_decay = 5e-4
     batch_norm_decay = 0.99
     image_shape = [480,640]
@@ -103,7 +103,7 @@ def train(network_backbone, pre_trained_model=None, trainset_filename='/content/
         # valid_loss += str(train_loss_total / train_iterator.dataset_size) + ","
         valid_mIoU += str(mean_IOU) + ","
 
-        if mean_IOU > best_mIoU and mean_IOU > 0.4:
+        if mean_IOU > best_mIoU and mean_IOU > 0.25:
             best_mIoU = mean_IOU
             model_savename = '{}_{:.4f}.ckpt'.format(network_backbone, best_mIoU)
             print('New best mIoU achieved, model saved as {}.'.format(model_savename))
