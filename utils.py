@@ -439,7 +439,8 @@ def validation_demo_collage(images, labels, predictions, demo_dir, batch_no):
         colored_label = label_to_color_image(labels[i])
         colored_prediction = label_to_color_image(predictions[i])
 
-        collage = np.hstack(images[i], colored_label, colored_prediction)
+        collage = np.hstack((images[i], colored_label))
+        collage = np.hstack((collage, colored_prediction))
         cv2.imwrite(os.path.join(demo_dir, 'image_{}_{}.jpg'.format(batch_no, i)), collage)
 
 def validation_single_demo(image, label, prediction, demo_dir, val_no):
@@ -459,7 +460,8 @@ def validation_single_demo_collage(image, label, prediction, demo_dir, val_no):
     colored_label = label_to_color_image(label)
     colored_prediction = label_to_color_image(prediction)
 
-    collage = np.hstack(image,colored_label, colored_prediction)
+    collage = np.hstack((image, colored_label))
+    collage = np.hstack((collage, colored_prediction))
     cv2.imwrite(os.path.join(demo_dir, 'image_collage_{}.jpg'.format(val_no)), collage)
 
 def single_demo(image, prediction, demo_dir, val_no):
