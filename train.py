@@ -22,7 +22,7 @@ def train(network_backbone, pre_trained_model=None, trainset_filename='/content/
     num_classes = 5
     ignore_label = 255
     num_epochs = 1000
-    minibatch_size = 8  # Unable to do minibatch_size = 12 :(
+    minibatch_size = 4  # Unable to do minibatch_size = 12 :(
     random_seed = 0
     learning_rate = 1e-3
     weight_decay = 5e-4
