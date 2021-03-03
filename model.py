@@ -97,8 +97,9 @@ class DeepLab(object):
         return loss
 
     def loss_cce(self, onehot_labels):
-        return tf.reduce_mean(
-            tf.keras.backend.categorical_crossentropy(target=tf.cast(onehot_labels, dtype=tf.float32), output=self.outputs))
+        cce = tf.keras.losses.CategoricalCrossentropy()
+        loss = cce(onehot_labels, self.outputs).numpy()
+        return  loss
 
     def optimizer_initializer(self):
 
