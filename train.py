@@ -77,6 +77,9 @@ def train(network_backbone, pre_trained_model=None, trainset_filename='/content/
         num_pixels_union_total = np.zeros(num_classes)
         num_pixels_intersection_total = np.zeros(num_classes)
 
+        rand = np.random.randint(0,valid_iterator.dataset_size-1)
+        count = 0
+
         # Multi-scale inputs prediction
         for _ in trange(valid_iterator.dataset_size):
             image, label = valid_iterator.next_raw_data()
@@ -92,7 +95,10 @@ def train(network_backbone, pre_trained_model=None, trainset_filename='/content/
             num_pixels_union_total += num_pixels_union
             num_pixels_intersection_total += num_pixels_intersection
 
-            validation_single_demo(image=image, label=np.squeeze(label, axis=-1), prediction=prediction, demo_dir=os.path.join("/content/CustomDeeplabv3/data/demos/deeplab/resnet_101_voc2012/", 'validation_demo'), val_no=str(i))
+            if count == rand:
+                validation_single_demo(image=image, label=np.squeeze(label, axis=-1), prediction=prediction, demo_dir=os.path.join("/content/CustomDeeplabv3/data/demos/deeplab/resnet_101_voc2012/", 'validation_demo'), val_no=str(i))
+
+            count += 1
 
         mean_IOU = mean_intersection_over_union(num_pixels_union=num_pixels_union_total, num_pixels_intersection=num_pixels_intersection_total)
 
