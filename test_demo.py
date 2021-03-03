@@ -5,7 +5,7 @@ import numpy as np
 from model import DeepLab
 from tqdm import trange
 from utils import (Dataset, Iterator, save_load_means, subtract_channel_means,
-                   validation_single_demo)
+                   validation_single_demo_collage)
 
 if __name__ == '__main__':
 
@@ -30,10 +30,10 @@ if __name__ == '__main__':
     n_samples = 8
     for i in trange(n_samples):
         image, label = test_iterator.next_raw_data()
-        image_input = subtract_channel_means(image=image, channel_means=channel_means)
+        # image_input = subtract_channel_means(image=image, channel_means=channel_means)
 
-        output = deeplab.test(inputs=[image_input], target_height=image.shape[0], target_width=image.shape[1])[0]
+        output = deeplab.test(inputs=[image], target_height=image.shape[0], target_width=image.shape[1])[0]
 
-        validation_single_demo(image, np.squeeze(label, axis=-1), np.argmax(output, axis=-1), demo_dir, str(i))
+        validation_single_demo_collage(image, np.squeeze(label, axis=-1), np.argmax(output, axis=-1), demo_dir, str(i))
 
     deeplab.close()

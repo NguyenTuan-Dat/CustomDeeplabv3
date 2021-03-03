@@ -10,8 +10,8 @@ from tqdm import trange
 from utils import (DataPreprocessor, Dataset, Iterator,
                    count_label_prediction_matches,
                    mean_intersection_over_union, multiscale_single_validate,
-                   save_load_means, subtract_channel_means, validation_demo,
-                   validation_single_demo)
+                   save_load_means, subtract_channel_means, validation_demo_collage,
+                   validation_single_demo_collage)
 import time
 
 
@@ -96,7 +96,7 @@ def train(network_backbone, pre_trained_model=None, trainset_filename='/content/
             num_pixels_intersection_total += num_pixels_intersection
 
             if count == rand:
-                validation_single_demo(image=image, label=np.squeeze(label, axis=-1), prediction=prediction, demo_dir=os.path.join("/content/CustomDeeplabv3/data/demos/deeplab/resnet_101_voc2012/", 'validation_demo'), val_no=str(i))
+                validation_single_demo_collage(image=image, label=np.squeeze(label, axis=-1), prediction=prediction, demo_dir=os.path.join("/content/CustomDeeplabv3/data/demos/deeplab/resnet_101_voc2012/", 'validation_demo'), val_no=str(i))
 
             count += 1
 
@@ -134,7 +134,7 @@ def train(network_backbone, pre_trained_model=None, trainset_filename='/content/
             num_pixels_union_total += num_pixels_union
             num_pixels_intersection_total += num_pixels_intersection
 
-            validation_demo(images=images, labels=np.squeeze(labels, axis=-1), predictions=predictions, demo_dir=os.path.join("/content/CustomDeeplabv3/data/demos/deeplab/resnet_101_voc2012/", 'training_demo'), batch_no=i)
+            validation_demo_collage(images=images, labels=np.squeeze(labels, axis=-1), predictions=predictions, demo_dir=os.path.join("/content/CustomDeeplabv3/data/demos/deeplab/resnet_101_voc2012/", 'training_demo'), batch_no=i)
         train_iterator.shuffle_dataset()
 
         # print('Training using SBD...')

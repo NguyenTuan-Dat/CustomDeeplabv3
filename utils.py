@@ -428,6 +428,19 @@ def validation_demo(images, labels, predictions, demo_dir, batch_no):
         save_annotation(label=labels[i], filename=os.path.join(demo_dir, 'image_{}_{}_label.png'.format(batch_no, i)), add_colormap=True)
         save_annotation(label=predictions[i], filename=os.path.join(demo_dir, 'image_{}_{}_prediction.png'.format(batch_no, i)), add_colormap=True)
 
+def validation_demo_collage(images, labels, predictions, demo_dir, batch_no):
+
+    assert images.ndim == 4 and labels.ndim == 3 and predictions.ndim == 3
+
+    if not os.path.exists(demo_dir):
+        os.makedirs(demo_dir)
+
+    for i in range(len(images)):
+        colored_label = label_to_color_image(labels[i])
+        colored_prediction = label_to_color_image(predictions[i])
+
+        collage = np.hstack(images[i], colored_label, colored_prediction)
+        cv2.imwrite(os.path.join(demo_dir, 'image_{}_{}.jpg'.format(batch_no, i)), collage)
 
 def validation_single_demo(image, label, prediction, demo_dir, val_no):
 
@@ -437,6 +450,17 @@ def validation_single_demo(image, label, prediction, demo_dir, val_no):
     cv2.imwrite(os.path.join(demo_dir, 'image_{}.jpg'.format(val_no)), image)
     save_annotation(label=label, filename=os.path.join(demo_dir, 'image_{}_label.png'.format(val_no)), add_colormap=True)
     save_annotation(label=prediction, filename=os.path.join(demo_dir, 'image_{}_prediction.png'.format(val_no)), add_colormap=True)
+
+def validation_single_demo_collage(image, label, prediction, demo_dir, val_no):
+
+    if not os.path.exists(demo_dir):
+        os.makedirs(demo_dir)
+
+    colored_label = label_to_color_image(label)
+    colored_prediction = label_to_color_image(prediction)
+
+    collage = np.hstack(image,colored_label, colored_prediction)
+    cv2.imwrite(os.path.join(demo_dir, 'image_collage_{}.jpg'.format(val_no)), collage)
 
 def single_demo(image, prediction, demo_dir, val_no):
     if not os.path.exists(demo_dir):
