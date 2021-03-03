@@ -175,7 +175,6 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Train DeepLab V3 for image semantic segmantation.')
 
     network_backbone_default = 'resnet_101'
-    pre_trained_model_default = None
     trainset_filename_default = 'data/datasets/VOCdevkit/VOC2012/ImageSets/Segmentation/train.txt'
     valset_filename_default = 'data/datasets/VOCdevkit/VOC2012/ImageSets/Segmentation/val.txt'
     images_dir_default = 'data/datasets/VOCdevkit/VOC2012/JPEGImages/'
@@ -188,7 +187,7 @@ if __name__ == '__main__':
     random_seed_default = 0
 
     parser.add_argument('--network_backbone', type=str, help='Network backbones: resnet_50, resnet_101, mobilenet_1.0_224. Default: resnet_101', default=network_backbone_default)
-    parser.add_argument('--pre_trained_model', type=str, help='Pretrained model directory', default=pre_trained_model_default)
+    parser.add_argument('--pre_trained_model', type=str, help='Pretrained model directory', default=None)
     parser.add_argument('--trainset_filename', type=str, help='Train dataset filename', default=trainset_filename_default)
     parser.add_argument('--valset_filename', type=str, help='Validation dataset filename', default=valset_filename_default)
     parser.add_argument('--images_dir', type=str, help='Images directory', default=images_dir_default)
