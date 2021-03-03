@@ -84,7 +84,7 @@ def train(network_backbone, pre_trained_model=None, trainset_filename='/content/
         for _ in trange(valid_iterator.dataset_size):
             image, label = valid_iterator.next_raw_data()
 
-            image = subtract_channel_means(image=image, channel_means=channel_means)
+            # image = subtract_channel_means(image=image, channel_means=channel_means)
 
             output, valid_loss = multiscale_single_validate(image=image, label=label, input_scales=validation_scales, validator=model.validate)
             valid_loss_total += valid_loss
