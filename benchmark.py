@@ -34,7 +34,7 @@ if __name__ == '__main__':
     for i in trange(n_samples):
         image, label = test_iterator.next_raw_data()
         # image_input = subtract_channel_means(image=image, channel_means=channel_means)
-        image = cv2.resize(image, 256, 256)
+        image = cv2.resize(image, (256, 256))
 
         output = deeplab.test(inputs=[image], target_height=image.shape[0], target_width=image.shape[1])[0]
 
@@ -47,7 +47,7 @@ if __name__ == '__main__':
         t = time.time()
         image, label = test_iterator.next_raw_data()
         # image_input = subtract_channel_means(image=image, channel_means=channel_means)
-        image = cv2.resize(image, 256, 256)
+        image = cv2.resize(image, (256, 256))
 
         output = deeplab.test(inputs=[image], target_height=image.shape[0], target_width=image.shape[1])[0]
         t = time.time() - t
