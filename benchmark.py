@@ -8,6 +8,7 @@ from utils import (Dataset, Iterator, save_load_means, subtract_channel_means,
                    validation_single_demo_collage)
 
 import time
+import cv2
 
 if __name__ == '__main__':
 
@@ -33,6 +34,7 @@ if __name__ == '__main__':
     for i in trange(n_samples):
         image, label = test_iterator.next_raw_data()
         # image_input = subtract_channel_means(image=image, channel_means=channel_means)
+        image = cv2.resize(image, 256, 256)
 
         output = deeplab.test(inputs=[image], target_height=image.shape[0], target_width=image.shape[1])[0]
 
@@ -45,10 +47,11 @@ if __name__ == '__main__':
         t = time.time()
         image, label = test_iterator.next_raw_data()
         # image_input = subtract_channel_means(image=image, channel_means=channel_means)
+        image = cv2.resize(image, 256, 256)
 
         output = deeplab.test(inputs=[image], target_height=image.shape[0], target_width=image.shape[1])[0]
         t = time.time() - t
-        log_time += str(t)
+        log_time += str(t) + ","
         print(t)
         sum_time += t
 
