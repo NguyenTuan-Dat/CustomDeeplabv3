@@ -1,4 +1,3 @@
-
 import os
 import sys
 import time
@@ -66,7 +65,6 @@ class RandomStateStack:
 class Dataset(object):
 
     def __init__(self, dataset_filename, images_dir, labels_dir, image_extension='.jpg', label_extension='.png'):
-
         self.dataset_filename = dataset_filename
         self.images_dir = images_dir
         self.labels_dir = labels_dir
@@ -76,7 +74,6 @@ class Dataset(object):
         self.size = len(self.image_filenames)
 
     def read_dataset(self):
-
         image_filenames = []
         label_filenames = []
 
@@ -104,7 +101,8 @@ class Iterator(object):
             print('Warning: dataset size should be no less than minibatch size.')
             print('Set minibatch size equal to dataset size.')
             self.minibatch_size = self.dataset_size
-        self.image_filenames, self.label_filenames = self.read_dataset(dataset=dataset, scramble=scramble, random_seed=random_seed)
+        self.image_filenames, self.label_filenames = self.read_dataset(dataset=dataset, scramble=scramble,
+                                                                       random_seed=random_seed)
         self.current_index = 0
         self.process_func = process_func
         self.num_jobs = num_jobs
@@ -181,7 +179,7 @@ class Iterator(object):
 
 def read_image(image_filename):
     if (not os.path.isfile(image_filename)):
-        print("Can't open file-",image_filename)
+        print("Can't open file-", image_filename)
         sys.exit()
     image = cv2.imread(image_filename)
 
@@ -190,7 +188,7 @@ def read_image(image_filename):
 
 def read_label(label_filename):
     if (not os.path.isfile(label_filename)):
-        print("Can't open file-",label_filename)
+        print("Can't open file-", label_filename)
         sys.exit()
     if label_filename.endswith('.mat'):
         # http://home.bharathh.info/pubs/codes/SBD/download.html
@@ -204,17 +202,14 @@ def read_label(label_filename):
 
 
 def subtract_channel_means(image, channel_means):
-
     return image - np.reshape(channel_means, (1, 1, 3))
 
 
 def add_channel_means(image, channel_means):
-
     return image + np.reshape(channel_means, (1, 1, 3))
 
 
 def flip_image_and_label(image, label):
-
     image_flipped = np.fliplr(image)
     label_flipped = np.fliplr(label)
 
@@ -244,8 +239,8 @@ def pad_image_and_label(image, label, top, bottom, left, right, pixel_value=0, l
 
 
 def random_crop(image, label, output_size):
-
-    assert image.shape[0] >= output_size[0] and image.shape[1] >= output_size[1], 'image size smaller than the desired output size.'
+    assert image.shape[0] >= output_size[0] and image.shape[1] >= output_size[
+        1], 'image size smaller than the desired output size.'
 
     height_start = np.random.randint(image.shape[0] - output_size[0] + 1)
     width_start = np.random.randint(image.shape[1] - output_size[1] + 1)
@@ -259,7 +254,6 @@ def random_crop(image, label, output_size):
 
 
 def image_augmentaion(image, label, output_size, min_scale_factor=0.5, max_scale_factor=2.0):
-
     original_height = image.shape[0]
     original_width = image.shape[1]
     target_height = output_size[0]
@@ -293,7 +287,9 @@ def image_augmentaion(image, label, output_size, min_scale_factor=0.5, max_scale
     horizonal_pad_left = horizonal_pad // 2
     horizonal_pad_right = horizonal_pad - horizonal_pad_left
 
-    image, label = pad_image_and_label(image=image, label=label, top=vertical_pad_up, bottom=vertical_pad_down, left=horizonal_pad_left, right=horizonal_pad_right, pixel_value=0, label_value=255)
+    image, label = pad_image_and_label(image=image, label=label, top=vertical_pad_up, bottom=vertical_pad_down,
+                                       left=horizonal_pad_left, right=horizonal_pad_right, pixel_value=0,
+                                       label_value=255)
 
     image, label = random_crop(image=image, label=label, output_size=output_size)
 
@@ -309,7 +305,6 @@ def image_augmentaion(image, label, output_size, min_scale_factor=0.5, max_scale
 class DataPreprocessor(object):
 
     def __init__(self, channel_means, output_size=[513, 513], min_scale_factor=0.5, max_scale_factor=2.0):
-
         self.channel_means = channel_means
         self.output_size = output_size
         self.min_scale_factor = min_scale_factor
@@ -323,7 +318,8 @@ class DataPreprocessor(object):
         # Image normalization
         image = subtract_channel_means(image=image, channel_means=self.channel_means)
 
-        image, label = image_augmentaion(image=image, label=label, output_size=self.output_size, min_scale_factor=self.min_scale_factor, max_scale_factor=self.max_scale_factor)
+        image, label = image_augmentaion(image=image, label=label, output_size=self.output_size,
+                                         min_scale_factor=self.min_scale_factor, max_scale_factor=self.max_scale_factor)
 
         return image, label
 
@@ -369,6 +365,7 @@ def static_vars(**kwargs):
         for key, val in kwargs.items():
             setattr(func, key, val)
         return func
+
     return decorate
 
 
@@ -417,7 +414,6 @@ Evaluation
 
 
 def validation_demo(images, labels, predictions, demo_dir, batch_no):
-
     assert images.ndim == 4 and labels.ndim == 3 and predictions.ndim == 3
 
     if not os.path.exists(demo_dir):
@@ -425,11 +421,14 @@ def validation_demo(images, labels, predictions, demo_dir, batch_no):
 
     for i in range(len(images)):
         cv2.imwrite(os.path.join(demo_dir, 'image_{}_{}.jpg'.format(batch_no, i)), images[i])
-        save_annotation(label=labels[i], filename=os.path.join(demo_dir, 'image_{}_{}_label.png'.format(batch_no, i)), add_colormap=True)
-        save_annotation(label=predictions[i], filename=os.path.join(demo_dir, 'image_{}_{}_prediction.png'.format(batch_no, i)), add_colormap=True)
+        save_annotation(label=labels[i], filename=os.path.join(demo_dir, 'image_{}_{}_label.png'.format(batch_no, i)),
+                        add_colormap=True)
+        save_annotation(label=predictions[i],
+                        filename=os.path.join(demo_dir, 'image_{}_{}_prediction.png'.format(batch_no, i)),
+                        add_colormap=True)
+
 
 def validation_demo_collage(images, labels, predictions, demo_dir, batch_no):
-
     assert images.ndim == 4 and labels.ndim == 3 and predictions.ndim == 3
 
     if not os.path.exists(demo_dir):
@@ -443,17 +442,19 @@ def validation_demo_collage(images, labels, predictions, demo_dir, batch_no):
         collage = np.hstack((collage, colored_label))
         cv2.imwrite(os.path.join(demo_dir, 'image_{}_{}.jpg'.format(batch_no, i)), collage)
 
-def validation_single_demo(image, label, prediction, demo_dir, val_no):
 
+def validation_single_demo(image, label, prediction, demo_dir, val_no):
     if not os.path.exists(demo_dir):
         os.makedirs(demo_dir)
 
     cv2.imwrite(os.path.join(demo_dir, 'image_{}.jpg'.format(val_no)), image)
-    save_annotation(label=label, filename=os.path.join(demo_dir, 'image_{}_label.png'.format(val_no)), add_colormap=True)
-    save_annotation(label=prediction, filename=os.path.join(demo_dir, 'image_{}_prediction.png'.format(val_no)), add_colormap=True)
+    save_annotation(label=label, filename=os.path.join(demo_dir, 'image_{}_label.png'.format(val_no)),
+                    add_colormap=True)
+    save_annotation(label=prediction, filename=os.path.join(demo_dir, 'image_{}_prediction.png'.format(val_no)),
+                    add_colormap=True)
+
 
 def validation_single_demo_collage(image, label, prediction, demo_dir, val_no):
-
     if not os.path.exists(demo_dir):
         os.makedirs(demo_dir)
 
@@ -464,11 +465,14 @@ def validation_single_demo_collage(image, label, prediction, demo_dir, val_no):
     collage = np.hstack((collage, colored_label))
     cv2.imwrite(os.path.join(demo_dir, 'image_collage_{}.jpg'.format(val_no)), collage)
 
+
 def single_demo(image, prediction, demo_dir, val_no):
     if not os.path.exists(demo_dir):
         os.makedirs(demo_dir)
     cv2.imwrite(os.path.join(demo_dir, 'image_{}.jpg'.format(val_no)), image)
-    save_annotation(label=prediction, filename=os.path.join(demo_dir, 'image_{}_prediction.png'.format(val_no)), add_colormap=True)
+    save_annotation(label=prediction, filename=os.path.join(demo_dir, 'image_{}_prediction.png'.format(val_no)),
+                    add_colormap=True)
+
 
 def count_label_prediction_matches(labels, predictions, num_classes, ignore_label):
     '''
@@ -494,7 +498,6 @@ def count_label_prediction_matches(labels, predictions, num_classes, ignore_labe
 
 
 def mean_intersection_over_union(num_pixels_union, num_pixels_intersection):
-
     valid_classes = num_pixels_union > 0
     mean_iou = np.mean(num_pixels_intersection[valid_classes] / num_pixels_union[valid_classes])
 
@@ -527,7 +530,6 @@ def multiscale_single_test(image, input_scales, predictor):
 
 
 def multiscale_single_validate(image, label, input_scales, validator):
-
     image_height_raw = image.shape[0]
     image_width_raw = image.shape[1]
     multiscale_outputs = []
@@ -536,7 +538,8 @@ def multiscale_single_validate(image, label, input_scales, validator):
         image_height_scaled = round(image_height_raw * input_scale)
         image_width_scaled = round(image_width_raw * input_scale)
         image_scaled = cv2.resize(image, (image_width_scaled, image_height_scaled), interpolation=cv2.INTER_LINEAR)
-        output, loss = validator(inputs=[image_scaled], target_height=image_height_raw, target_width=image_width_raw, labels=[label])
+        output, loss = validator(inputs=[image_scaled], target_height=image_height_raw, target_width=image_width_raw,
+                                 labels=[label])
         multiscale_outputs.append(output[0])
         multiscale_losses.append(loss)
 
@@ -556,17 +559,22 @@ if __name__ == '__main__':
 
     np.random.seed(0)
 
-    train_dataset = Dataset(dataset_filename='data/datasets/VOCdevkit/VOC2012/ImageSets/Segmentation/train.txt', images_dir='data/datasets/VOCdevkit/VOC2012/JPEGImages/', labels_dir='data/datasets/VOCdevkit/VOC2012/SegmentationClass/', image_extension='.jpg', label_extension='.png')
+    train_dataset = Dataset(dataset_filename='data/datasets/VOCdevkit/VOC2012/ImageSets/Segmentation/train.txt',
+                            images_dir='data/datasets/VOCdevkit/VOC2012/JPEGImages/',
+                            labels_dir='data/datasets/VOCdevkit/VOC2012/SegmentationClass/', image_extension='.jpg',
+                            label_extension='.png')
     print(train_dataset.image_filenames)
     print(train_dataset.size)
 
-    channel_means = save_load_means(means_filename='channel_means.npz', image_filenames=train_dataset.image_filenames, recalculate=False)
+    channel_means = save_load_means(means_filename='channel_means.npz', image_filenames=train_dataset.image_filenames,
+                                    recalculate=False)
     print(channel_means)
 
     voc2012_preprocessor = DataPreprocessor(channel_means=channel_means, output_size=[513, 513], max_scale_factor=1.5)
 
     # Single thread is faster :(
-    train_iterator = Iterator(dataset=train_dataset, minibatch_size=16, process_func=voc2012_preprocessor.preprocess, random_seed=None, scramble=True, num_jobs=1)
+    train_iterator = Iterator(dataset=train_dataset, minibatch_size=16, process_func=voc2012_preprocessor.preprocess,
+                              random_seed=None, scramble=True, num_jobs=1)
 
     # Test iterator
     time_start = time.time()
@@ -576,4 +584,5 @@ if __name__ == '__main__':
         # print(images.shape, labels.shape)
     time_end = time.time()
     time_elapsed = time_end - time_start
-    print('Time Elapsed: %02d:%02d:%02d' % (time_elapsed // 3600, (time_elapsed % 3600 // 60), (time_elapsed % 60 // 1)))
+    print(
+        'Time Elapsed: %02d:%02d:%02d' % (time_elapsed // 3600, (time_elapsed % 3600 // 60), (time_elapsed % 60 // 1)))

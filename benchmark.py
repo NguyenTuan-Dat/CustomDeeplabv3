@@ -24,8 +24,10 @@ if __name__ == '__main__':
 
     minibatch_size = 16
 
-    test_dataset = Dataset(dataset_filename=testset_filename, images_dir=images_dir, labels_dir=labels_dir, image_extension='.png', label_extension='.png')
-    test_iterator = Iterator(dataset=test_dataset, minibatch_size=minibatch_size, process_func=None, random_seed=None, scramble=False, num_jobs=1)
+    test_dataset = Dataset(dataset_filename=testset_filename, images_dir=images_dir, labels_dir=labels_dir,
+                           image_extension='.png', label_extension='.png')
+    test_iterator = Iterator(dataset=test_dataset, minibatch_size=minibatch_size, process_func=None, random_seed=None,
+                             scramble=False, num_jobs=1)
 
     deeplab = DeepLab('resnet_101', training=False, num_classes=5)
     deeplab.load(osp.join(models_dir, model_filename))
@@ -55,7 +57,7 @@ if __name__ == '__main__':
         print(t)
         sum_time += t
 
-    avg_time = sum_time/n_test
+    avg_time = sum_time / n_test
     print(avg_time)
 
     dir_log = open("/content/drive/MyDrive/Colab Notebooks/RobotNhatBongTennis2021/Models/log_resnet_101.txt", "w")

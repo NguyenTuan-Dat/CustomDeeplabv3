@@ -1,4 +1,3 @@
-
 import os
 from datetime import datetime
 
@@ -9,7 +8,8 @@ from modules import atrous_spatial_pyramid_pooling
 
 class DeepLab(object):
 
-    def __init__(self, base_architecture, training=True, num_classes=21, ignore_label=255, batch_norm_momentum=0.9997, pre_trained_model=None, log_dir='data/logs/deeplab/'):
+    def __init__(self, base_architecture, training=True, num_classes=21, ignore_label=255, batch_norm_momentum=0.9997,
+                 pre_trained_model=None, log_dir='data/logs/deeplab/'):
 
         self.is_training = tf.placeholder(tf.bool, None, name='is_training')
         self.num_classes = num_classes
@@ -58,7 +58,8 @@ class DeepLab(object):
                 features = Resnet(n_layers, self.inputs, self.weight_decay, self.batch_norm_momentum, self.is_training)
             elif base_architecture.startswith('mobilenet'):
                 depth_multiplier = float(base_architecture.split('_')[-1])
-                features = MobileNet(depth_multiplier, self.inputs, self.weight_decay, self.batch_norm_momentum, self.is_training)
+                features = MobileNet(depth_multiplier, self.inputs, self.weight_decay, self.batch_norm_momentum,
+                                     self.is_training)
             else:
                 raise ValueError('Unknown backbone architecture!')
 
@@ -68,7 +69,8 @@ class DeepLab(object):
 
         pools = atrous_spatial_pyramid_pooling(inputs=self.feature_map, filters=256, regularizer=self.regularizer)
         logits = tf.layers.conv2d(inputs=pools, filters=self.num_classes, kernel_size=(1, 1), name='logits')
-        outputs = tf.image.resize_bilinear(images=logits, size=(self.target_height, self.target_width), name='resized_outputs')
+        outputs = tf.image.resize_bilinear(images=logits, size=(self.target_height, self.target_width),
+                                           name='resized_outputs')
 
         return outputs
 
@@ -82,24 +84,24 @@ class DeepLab(object):
         onehot_labels = tf.squeeze(onehot_labels, axis=-2)
 
         # loss = tf.losses.softmax_cross_entropy(onehot_labels=onehot_labels, logits=tf.reshape(self.outputs, shape=[-1, self.num_classes]), weights=not_ignore_mask)
-        loss = 0.4*self.dice_loss(onehot_labels) + 0.6*self.l2(onehot_labels) \
-               # + 0.3*self.loss_cce(onehot_labels)
+        loss = 0.4 * self.dice_loss(onehot_labels) + 0.6 * self.l2(onehot_labels) \
+            # + 0.3*self.loss_cce(onehot_labels)
 
         return loss
 
     def dice_loss(self, onehot_labels):
-        numerator = 2 * tf.reduce_sum(onehot_labels[:, :, :, 1:] * self.outputs[:, :, :, 1:], axis=(1,2,3))
-        denominator = tf.reduce_sum(onehot_labels[:, :, :, 1:] + self.outputs[:, :, :, 1:], axis=(1,2,3))
+        numerator = 2 * tf.reduce_sum(onehot_labels[:, :, :, 1:] * self.outputs[:, :, :, 1:], axis=(1, 2, 3))
+        denominator = tf.reduce_sum(onehot_labels[:, :, :, 1:] + self.outputs[:, :, :, 1:], axis=(1, 2, 3))
 
         return tf.reduce_mean(1 - numerator / denominator)
 
     def l2(self, onehot_labels):
-        loss = tf.reduce_sum((tf.cast(onehot_labels, dtype= tf.float32)-self.outputs)**2)
+        loss = tf.reduce_sum((tf.cast(onehot_labels, dtype=tf.float32) - self.outputs) ** 2)
         return loss
 
     def loss_cce(self, onehot_labels):
         cce = tf.keras.losses.CategoricalCrossentropy()
-        loss = cce(tf.cast(onehot_labels, dtype= tf.float32), self.outputs)
+        loss = cce(tf.cast(onehot_labels, dtype=tf.float32), self.outputs)
         return tf.reduce_mean(loss)
 
     def optimizer_initializer(self):
@@ -119,7 +121,11 @@ class DeepLab(object):
 
     def train(self, inputs, labels, target_height, target_width, learning_rate, weight_decay):
 
-        _, outputs, train_loss, summaries = self.sess.run([self.optimizer, self.outputs, self.loss, self.train_summaries], feed_dict={self.inputs: inputs, self.labels: labels, self.learning_rate: learning_rate, self.target_height: target_height, self.target_width: target_width, self.weight_decay: weight_decay, self.is_training: True})
+        _, outputs, train_loss, summaries = self.sess.run(
+            [self.optimizer, self.outputs, self.loss, self.train_summaries],
+            feed_dict={self.inputs: inputs, self.labels: labels, self.learning_rate: learning_rate,
+                       self.target_height: target_height, self.target_width: target_width,
+                       self.weight_decay: weight_decay, self.is_training: True})
 
         self.writer.add_summary(summaries, self.train_step)
         self.train_step += 1
@@ -128,7 +134,11 @@ class DeepLab(object):
 
     def validate(self, inputs, labels, target_height, target_width):
 
-        outputs, valid_loss, summaries = self.sess.run([self.outputs, self.loss, self.valid_summaries], feed_dict={self.inputs: inputs, self.labels: labels, self.target_height: target_height, self.target_width: target_width, self.is_training: False})
+        outputs, valid_loss, summaries = self.sess.run([self.outputs, self.loss, self.valid_summaries],
+                                                       feed_dict={self.inputs: inputs, self.labels: labels,
+                                                                  self.target_height: target_height,
+                                                                  self.target_width: target_width,
+                                                                  self.is_training: False})
 
         self.writer.add_summary(summaries, self.train_step)
 
@@ -136,7 +146,8 @@ class DeepLab(object):
 
     def test(self, inputs, target_height, target_width):
 
-        outputs = self.sess.run(self.outputs, feed_dict={self.inputs: inputs, self.target_height: target_height, self.target_width: target_width, self.is_training: False})
+        outputs = self.sess.run(self.outputs, feed_dict={self.inputs: inputs, self.target_height: target_height,
+                                                         self.target_width: target_width, self.is_training: False})
 
         return outputs
 
@@ -156,7 +167,9 @@ class DeepLab(object):
 
         variables_to_restore = tf.contrib.slim.get_variables_to_restore(exclude=['global_step'])
         valid_prefix = 'backbone/'
-        tf.train.init_from_checkpoint(path_to_pretrained_weights, {v.name[len(valid_prefix):].split(':')[0]: v for v in variables_to_restore if v.name.startswith(valid_prefix)})
+        tf.train.init_from_checkpoint(path_to_pretrained_weights,
+                                      {v.name[len(valid_prefix):].split(':')[0]: v for v in variables_to_restore if
+                                       v.name.startswith(valid_prefix)})
 
     def close(self):
 
@@ -166,7 +179,6 @@ class DeepLab(object):
 
 
 if __name__ == '__main__':
-
     deeplab = DeepLab('resnet_101', pre_trained_model='data/models/pretrained/resnet_101/resnet_v2_101.ckpt')
     print('Graph compiled successfully.')
     deeplab.close()
