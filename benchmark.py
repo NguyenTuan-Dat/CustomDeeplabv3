@@ -40,6 +40,7 @@ if __name__ == '__main__':
 
     n_test = 10000
     sum_time = 0
+    log_time = ""
     for i in range(n_test):
         t = time.time()
         image, label = test_iterator.next_raw_data()
@@ -47,10 +48,15 @@ if __name__ == '__main__':
 
         output = deeplab.test(inputs=[image], target_height=image.shape[0], target_width=image.shape[1])[0]
         t = time.time() - t
+        log_time += str(t)
         print(t)
         sum_time += t
 
     avg_time = sum_time/n_test
     print(avg_time)
+
+    dir_log = open("/content/drive/MyDrive/Colab Notebooks/RobotNhatBongTennis2021/Models/log_resnet_101.txt", "w")
+    dir_log.write(log_time)
+    dir_log.close()
 
     deeplab.close()
